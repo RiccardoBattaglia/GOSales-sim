@@ -1,9 +1,16 @@
 package it.polito.tdp.gosales;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+
+import org.jgrapht.alg.util.Pair;
 
 import it.polito.tdp.gosales.model.Model;
+import it.polito.tdp.gosales.model.Retailers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -31,16 +38,16 @@ public class FXMLController {
     private Button btnSimula;
 
     @FXML
-    private ComboBox<?> cmbAnno;
+    private ComboBox<Integer> cmbAnno;
 
     @FXML
-    private ComboBox<?> cmbNazione;
+    private ComboBox<String> cmbNazione;
 
     @FXML
     private ComboBox<?> cmbProdotto;
 
     @FXML
-    private ComboBox<?> cmbRivenditore;
+    private ComboBox<String> cmbRivenditore;
 
     @FXML
     private TextArea txtArchi;
@@ -62,12 +69,100 @@ public class FXMLController {
 
     @FXML
     void doAnalizzaComponente(ActionEvent event) {
+    	
+    	 String riv = cmbRivenditore.getValue() ;
+     	
+     	if(riv==null) {
+     		txtResult.appendText("Inserire un rivenditore.\n");
+     		return ;
+     	}
+     	
+     	Retailers r=new Retailers(0, null, null, null);
+     	
+     	for(Retailers i : this.model.getVertici()) {
+     		if(i.getName().equals(riv)){
+     			r=i;
+     		}
+     	}
+     	
+     	
+       	this.txtResult.appendText("La componente connessa di "+riv+" ha dimensione "+this.model.getComponente(r).size()+".\n");
+       	
 
+       		txtResult.appendText("Il peso totale degli archi della componente connessa è "+(int)this.model.getPesoTot(r)+".\n");
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	
+    	cmbRivenditore.getItems().clear();
+    	
+       String nazione = cmbNazione.getValue() ;
+    	
+    	if(nazione==null) {
+    		txtResult.setText("Inserire una nazione.\n");
+    		return ;
+    	}
+    	
+     	 Integer anno = cmbAnno.getValue() ;
+    	
+    	if(anno==null) {
+    		txtResult.setText("Inserire un anno.\n");
+    		return ;
+    	}
+    	
+       String tm = txtNProdotti.getText() ;
+    	
+    	if(tm.equals("")) {
+    		txtResult.setText("Inserire i prodotti in comune.\n");
+    		return ;
+    	}
+    	
+    	int m = 0 ;
 
+    	try {
+	    	m = Integer.parseInt(tm) ;
+    	} catch(NumberFormatException e) {
+    		txtResult.setText("Inserire un valore numerico.\n");
+    		return ;
+    	}
+    	
+//   	creazione grafo
+   	this.model.creaGrafo(nazione, anno , m);
+   	
+   	
+//   	stampa grafo
+   	this.txtResult.setText("Grafo creato.\n");
+   	this.txtResult.appendText("Ci sono " + this.model.nVertici() + " vertici\n");
+   	this.txtResult.appendText("Ci sono " + this.model.nArchi() + " archi\n\n");
+   	
+   	txtVertici.clear();
+   	txtArchi.clear();
+   	
+   	for(String i : this.model.getVerticiName()) {
+   	txtVertici.appendText(i+"\n");
+   	}
+   	
+   	for(String i : this.model.stampaArchi()) {
+    	txtArchi.appendText(i+"\n");
+   	}
+   	
+   	List<String> venditori=new LinkedList<>();
+   	
+   	for(Retailers i : this.model.getVertici()) {
+   		venditori.add(i.getName());
+   	}
+   	
+   	Collections.sort(venditori);
+   	
+   	cmbRivenditore.setDisable(false);
+   	
+   	cmbRivenditore.getItems().addAll(venditori);
+   	
+   	btnAnalizzaComponente.setDisable(false);
+   	
+	   	
+  
     }
 
     @FXML
@@ -95,6 +190,17 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	
+    	List<Integer> anni = new LinkedList<>();
+    	anni.add(2015);
+    	anni.add(2016);
+    	anni.add(2017);
+    	anni.add(2018);
+    	cmbAnno.getItems().addAll(anni);
+    	
+    	List<String> nazioni = new LinkedList<>();
+    	nazioni.addAll(this.model.getNazioni());
+    	cmbNazione.getItems().addAll(nazioni);
     }
 
 }

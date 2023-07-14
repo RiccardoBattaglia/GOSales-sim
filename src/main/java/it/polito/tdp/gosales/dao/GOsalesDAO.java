@@ -110,4 +110,58 @@ public class GOsalesDAO {
 	}
 	
 	
+	
+	public List<Integer> getProdottiPerRetailerInAnno(Retailers r, Integer a){
+		String query = "select distinct product_number "
+				+ "from go_daily_sales "
+				+ "where retailer_code=? and Year(date)=? ";
+		List<Integer> result = new ArrayList<Integer>();
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(query);
+			st.setInt(1, r.getCode());
+			st.setInt(2, a);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getInt("product_number"));
+			}
+			conn.close();
+			return result;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Errore connessione al database");
+			throw new RuntimeException("Error Connection Database");
+		}
+		
+	}
+	
+	public Integer getPeso(Retailers r1, Retailers r2, Integer a){
+		String query = "select count(distinct product_number) as n "
+				+ "from go_daily_sales "
+				+ "where retailer_code=? and Year(date)=? and product_number in (select distinct product_number "
+				+ "from go_daily_sales "
+				+ "where retailer_code=? and Year(date)=?) ";
+		int result=0;
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(query);
+			st.setInt(1, r1.getCode());
+			st.setInt(2, a);
+			st.setInt(3, r2.getCode());
+			st.setInt(4, a);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				result=rs.getInt("n");
+			}
+			conn.close();
+			return result;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Errore connessione al database");
+			throw new RuntimeException("Error Connection Database");
+		}
+		
+	}
 }

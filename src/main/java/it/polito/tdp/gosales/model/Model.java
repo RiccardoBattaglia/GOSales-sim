@@ -19,8 +19,6 @@ import it.polito.tdp.gosales.dao.GOsalesDAO;
 
 public class Model {
 	
-
-	
 	private GOsalesDAO dao;
 	private Graph<Retailers, DefaultWeightedEdge> grafo;
 	private Map<Retailers, List<Integer>> retailersMap;

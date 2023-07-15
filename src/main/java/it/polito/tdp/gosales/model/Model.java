@@ -25,9 +25,15 @@ public class Model {
 	private List<Retailers> retailersList;
 	
 	public Model() {
+		
 		this.dao = new GOsalesDAO();
 		
 		this.retailersList = this.dao.getAllRetailers();
+		
+//		this.retailersMap=new HashMap<>();
+//		for(Retailers i : retailersList) {
+//			this.retailersMap.put((i), this.dao.getProdottiPerRetailerInAnno(i, anno));
+//		}
 		
 	}
 	

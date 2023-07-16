@@ -131,10 +131,10 @@ public class FXMLController {
    	this.model.creaGrafo(nazione, anno , m);
    	
    	
-//   	stampa grafo
-   	this.txtResult.setText("Grafo creato.\n");
-   	this.txtResult.appendText("Ci sono " + this.model.nVertici() + " vertici\n");
-   	this.txtResult.appendText("Ci sono " + this.model.nArchi() + " archi\n\n");
+//	stampa grafo
+	this.txtResult.setText("Grafo creato.\n");
+	this.txtResult.appendText("#Vertici: " + this.model.nVertici() + "\n");
+	this.txtResult.appendText("#Archi: " + this.model.nArchi() + "\n\n");
    	
    	txtVertici.clear();
    	txtArchi.clear();
